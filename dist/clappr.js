@@ -12084,9 +12084,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _playbacksHtml5_video2 = _interopRequireDefault(_playbacksHtml5_video);
 
-	var _hlsJs = __webpack_require__(83);
+	var _hlsDebugJs = __webpack_require__(83);
 
-	var _hlsJs2 = _interopRequireDefault(_hlsJs);
+	var _hlsDebugJs2 = _interopRequireDefault(_hlsDebugJs);
 
 	var _baseEvents = __webpack_require__(6);
 
@@ -12152,20 +12152,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function setupHls() {
 	      var _this = this;
 
-	      this.hls = new _hlsJs2['default'](this.options.hlsjsConfig || {});
-	      this.hls.on(_hlsJs2['default'].Events.MEDIA_ATTACHED, function () {
+	      this.hls = new _hlsDebugJs2['default'](this.options.hlsjsConfig || {});
+	      this.hls.on(_hlsDebugJs2['default'].Events.MEDIA_ATTACHED, function () {
 	        return _this.hls.loadSource(_this.options.src);
 	      });
-	      this.hls.on(_hlsJs2['default'].Events.LEVEL_LOADED, function (evt, data) {
+	      this.hls.on(_hlsDebugJs2['default'].Events.LEVEL_LOADED, function (evt, data) {
 	        return _this.updatePlaybackType(evt, data);
 	      });
-	      this.hls.on(_hlsJs2['default'].Events.LEVEL_UPDATED, function (evt, data) {
+	      this.hls.on(_hlsDebugJs2['default'].Events.LEVEL_UPDATED, function (evt, data) {
 	        return _this.updateDuration(evt, data);
 	      });
-	      this.hls.on(_hlsJs2['default'].Events.LEVEL_SWITCH, function (evt, data) {
+	      this.hls.on(_hlsDebugJs2['default'].Events.LEVEL_SWITCH, function (evt, data) {
 	        return _this.onLevelSwitch(evt, data);
 	      });
-	      this.hls.on(_hlsJs2['default'].Events.FRAG_LOADED, function (evt, data) {
+	      this.hls.on(_hlsDebugJs2['default'].Events.FRAG_LOADED, function (evt, data) {
 	        return _this.onFragmentLoaded(evt, data);
 	      });
 	      this.hls.attachMedia(this.el);
@@ -12330,7 +12330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var resourceParts = resource.split('?')[0].match(/.*\.(.*)$/) || [];
 	  var isHls = resourceParts.length > 1 && resourceParts[1] === "m3u8" || mimeType === 'application/x-mpegURL' || mimeType === 'application/vnd.apple.mpegurl';
 
-	  return !!(_hlsJs2['default'].isSupported() && isHls && !_componentsBrowser2['default'].isSafari);
+	  return !!(_hlsDebugJs2['default'].isSupported() && isHls && !_componentsBrowser2['default'].isSafari);
 	};
 	module.exports = exports['default'];
 
@@ -12572,12 +12572,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.levelController.levels;
 	    }
 
+	    /** Return all audio tracks **/
+	  }, {
+	    key: 'audio',
+	    get: function get() {
+	      return this.levelController.audios;
+	    }
+
+	    /** Return all subtitle tracks **/
+	  }, {
+	    key: 'subtitles',
+	    get: function get() {
+	      return this.levelController.subtitles;
+	    }
+
 	    /** Return current playback quality level **/
 	  }, {
 	    key: 'currentLevel',
 	    get: function get() {
 	      return this.mediaController.currentLevel;
 	    },
+
+	    /** Return current playback audio track **/
 
 	    /* set quality level immediately (-1 for automatic level selection) */
 	    set: function set(newLevel) {
@@ -12587,6 +12603,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /** Return next playback quality level (quality level of next fragment) **/
+	  }, {
+	    key: 'currentAudio',
+	    get: function get() {
+	      return this.mediaController.audio;
+	    }
+
+	    /** get name of current audio track **/
+	  }, {
+	    key: 'currentAudioLang',
+	    get: function get() {
+	      return this.levelController.audioLangName;
+	    },
+
+	    /** Set audio lang **/
+	    set: function set(newAudioLang) {
+	      this.levelController.audioLangName = newAudioLang;
+	    }
+
+	    /** Return current subtitle track **/
+	  }, {
+	    key: 'currentSubtitle',
+	    get: function get() {
+	      return this.mediaController.subtitle;
+	    }
+
+	    /** get name of current subtitle track **/
+	  }, {
+	    key: 'currentSubtitleLang',
+	    get: function get() {
+	      return this.levelController.subtitleLangName;
+	    },
+
+	    /** Set subtitle lang **/
+	    set: function set(newSubtitleLang) {
+	      this.levelController.subtitleLangName = newSubtitleLang;
+	    }
 	  }, {
 	    key: 'nextLevel',
 	    get: function get() {
@@ -12710,11 +12762,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  MEDIA_DETACHED: 'hlsMediaDetached',
 	  // fired to signal that a manifest loading starts - data: { url : manifestURL}
 	  MANIFEST_LOADING: 'hlsManifestLoading',
-	  // fired after manifest has been loaded - data: { levels : [available quality levels] , url : manifestURL, stats : { trequest, tfirst, tload, mtime}}
+	  // fired after manifest has been loaded - data: { levels : [available quality levels] , audios : [available audio tracks] , subtitles : [available subtitles] , url : manifestURL, stats : { trequest, tfirst, tload, mtime}}
 	  MANIFEST_LOADED: 'hlsManifestLoaded',
 	  // fired after manifest has been parsed - data: { levels : [available quality levels] , firstLevel : index of first quality level appearing in Manifest}
 	  MANIFEST_PARSED: 'hlsManifestParsed',
-	  // fired when a level playlist loading starts - data: { url : level URL  level : id of level being loaded}
+	  // fired when a level playlist loading starts - data: { url : level URL  audioUrl: audio URL,  subtitleUrl: subtitle URL  level : id of level being loaded}
 	  LEVEL_LOADING: 'hlsLevelLoading',
 	  // fired when a level playlist loading finishes - data: { details : levelDetails object, level : id of loaded level, stats : { trequest, tfirst, tload, mtime} }
 	  LEVEL_LOADED: 'hlsLevelLoaded',
@@ -12805,9 +12857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // Identifier for a buffer append error - data: append error description
 	  BUFFER_APPEND_ERROR: 'bufferAppendError',
 	  // Identifier for a buffer appending error event - data: appending error description
-	  BUFFER_APPENDING_ERROR: 'bufferAppendingError',
-	  // Identifier for a buffer stalled error event
-	  BUFFER_STALLED_ERROR: 'bufferStalledError'
+	  BUFFER_APPENDING_ERROR: 'bufferAppendingError'
 	};
 	exports.ErrorDetails = ErrorDetails;
 
@@ -12882,11 +12932,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onLevelLoading',
 	    value: function onLevelLoading(data) {
-	      this.load(data.url, data.level, data.id);
+	      this.load(data.url, data.level, data.id, data.plstTypeId);
 	    }
 	  }, {
 	    key: 'load',
-	    value: function load(url, id1, id2) {
+	    value: function load(url, id1, id2, plstTypeId) {
 	      var config = this.hls.config,
 	          retry,
 	          timeout,
@@ -12894,6 +12944,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.url = url;
 	      this.id = id1;
 	      this.id2 = id2;
+	      this.plstTypeId = plstTypeId;
 	      if (this.id === undefined) {
 	        retry = config.manifestLoadingMaxRetry;
 	        timeout = config.manifestLoadingTimeOut;
@@ -12945,10 +12996,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	          }
 	        }
-
+	        level.audioGrupId = attrs.AUDIO;
+	        level.subtGroupId = attrs.SUBTITLES;
 	        levels.push(level);
 	      }
 	      return levels;
+	    }
+	  }, {
+	    key: 'parseMasterPlaylistMedia',
+	    value: function parseMasterPlaylistMedia(string, baseurl, type) {
+	      var medias = [],
+	          result = undefined;
+
+	      // https://regex101.com is your friend
+	      var re = /#EXT-X-MEDIA:(.*)/g;
+	      while ((result = re.exec(string)) != null) {
+	        var media = {};
+	        var attrs = new _utilsAttrList2['default'](result[1]);
+	        if (attrs.TYPE === type) {
+	          media.groupId = attrs['GROUP-ID'];
+	          media.name = attrs.NAME;
+	          media.forced = attrs.FORCED === 'YES';
+	          media.autoselect = attrs.AUTOSELECT === 'YES';
+	          media.url = attrs.URI === undefined ? '' : this.resolve(attrs.URI, baseurl);
+	          media.lang = attrs.LANGUAGE;
+	          if (media.name === undefined) {
+	            media.name = media.lang;
+	          }
+	          medias.push(media);
+	        }
+	      }
+	      return medias;
 	    }
 	  }, {
 	    key: 'avc1toavcoti',
@@ -12971,10 +13049,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'parseLevelPlaylist',
-	    value: function parseLevelPlaylist(string, baseurl, id) {
+	    value: function parseLevelPlaylist(string, baseurl, id, plstTypeId) {
 	      var currentSN = 0,
 	          totalduration = 0,
-	          level = { url: baseurl, fragments: [], live: true, startSN: 0 },
+	          level = { url: baseurl, fragments: [], live: true, startSN: 0, plstTypeId: plstTypeId },
 	          levelkey = { method: null, key: null, iv: null, uri: null },
 	          cc = 0,
 	          programDateTime = null,
@@ -13084,7 +13162,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          id = this.id,
 	          id2 = this.id2,
 	          hls = this.hls,
-	          levels;
+	          plstTypeId = this.plstTypeId,
+	          levels,
+	          audios,
+	          subtitles;
 	      // responseURL not supported on some browsers (it is used to detect URL redirection)
 	      if (url === undefined) {
 	        // fallback to initial URL
@@ -13100,15 +13181,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	          if (this.id === null) {
 	            hls.trigger(_events2['default'].MANIFEST_LOADED, { levels: [{ url: url }], url: url, stats: stats });
 	          } else {
-	            var levelDetails = this.parseLevelPlaylist(string, url, id);
+	            var levelDetails = this.parseLevelPlaylist(string, url, id, plstTypeId);
 	            stats.tparsed = performance.now();
 	            hls.trigger(_events2['default'].LEVEL_LOADED, { details: levelDetails, level: id, id: id2, stats: stats });
 	          }
 	        } else {
 	          levels = this.parseMasterPlaylist(string, url);
+	          audios = this.parseMasterPlaylistMedia(string, url, 'AUDIO');
+	          subtitles = this.parseMasterPlaylistMedia(string, url, 'SUBTITLES');
 	          // multi level playlist, parse level info
 	          if (levels.length) {
-	            hls.trigger(_events2['default'].MANIFEST_LOADED, { levels: levels, url: url, stats: stats });
+	            hls.trigger(_events2['default'].MANIFEST_LOADED, { levels: levels, audios: audios, subtitles: subtitles, url: url, stats: stats });
 	          } else {
 	            hls.trigger(_events2['default'].ERROR, { type: _errors.ErrorTypes.NETWORK_ERROR, details: _errors.ErrorDetails.MANIFEST_PARSING_ERROR, fatal: true, url: url, reason: 'no level found in manifest' });
 	          }
@@ -13425,7 +13508,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }], [{
 	    key: 'parseAttrList',
 	    value: function parseAttrList(input) {
-	      var re = /\s*(.+?)\s*=((?:\".*?\")|.*?)(?:,|$)/g;
+	      var re = /(.+?)=((?:\".*?\")|.*?)(?:,|$)/g;
 	      var match,
 	          attrs = {};
 	      while ((match = re.exec(input)) !== null) {
@@ -13727,8 +13810,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  PARSING: 5,
 	  PARSED: 6,
 	  APPENDING: 7,
-	  BUFFER_FLUSHING: 8,
-	  ENDED: 9
+	  BUFFER_FLUSHING: 8
 	};
 
 	var MSEMediaController = (function (_EventHandler) {
@@ -13792,7 +13874,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.mp4segments = [];
 	      this.flushRange = [];
 	      this.bufferRange = [];
-	      this.stalled = false;
 	      var frag = this.fragCurrent;
 	      if (frag) {
 	        if (frag.loader) {
@@ -13840,6 +13921,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          level,
 	          levelDetails,
 	          hls = this.hls;
+	      _utilsLogger.logger.log('MSE Media Controller state:' + this.state);
 	      switch (this.state) {
 	        case State.ERROR:
 	          //don't do anything in error state to avoid breaking further ...
@@ -13974,23 +14056,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // have we reached end of VOD playlist ?
 	                    if (!levelDetails.live) {
 	                      var mediaSource = this.mediaSource;
-	                      if (mediaSource) {
-	                        switch (mediaSource.readyState) {
-	                          case 'open':
-	                            var sb = this.sourceBuffer;
-	                            if (!(sb.audio && sb.audio.updating || sb.video && sb.video.updating)) {
-	                              _utilsLogger.logger.log('all media data available, signal endOfStream() to MediaSource and stop loading fragment');
-	                              //Notify the media element that it now has all of the media data
-	                              mediaSource.endOfStream();
-	                              this.state = State.ENDED;
-	                            }
-	                            break;
-	                          case 'ended':
-	                            _utilsLogger.logger.log('all media data available and mediaSource ended, stop loading fragment');
-	                            this.state = State.ENDED;
-	                            break;
-	                          default:
-	                            break;
+	                      if (mediaSource && mediaSource.readyState === 'open') {
+	                        // ensure sourceBuffer are not in updating states
+	                        var sb = this.sourceBuffer;
+	                        if (!(sb.audio && sb.audio.updating || sb.video && sb.video.updating)) {
+	                          _utilsLogger.logger.log('all media data available, signal endOfStream() to MediaSource');
+	                          //Notify the media element that it now has all of the media data
+	                          mediaSource.endOfStream();
 	                        }
 	                      }
 	                    }
@@ -14175,8 +14247,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          /* if not everything flushed, stay in BUFFER_FLUSHING state. we will come back here
 	             each time sourceBuffer updateend() callback will be triggered
 	             */
-	          break;
-	        case State.ENDED:
 	          break;
 	        default:
 	          break;
@@ -14585,9 +14655,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          // switch to IDLE state to load new fragment
 	          this.state = State.IDLE;
 	        }
-	      } else if (this.state === State.ENDED) {
-	        // switch to IDLE state to check for potential new fragment
-	        this.state = State.IDLE;
 	      }
 	      if (this.media) {
 	        this.lastCurrentTime = this.media.currentTime;
@@ -14659,6 +14726,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function onLevelLoaded(data) {
 	      var newDetails = data.details,
 	          newLevelId = data.level,
+	          id = data.id,
+	          plstTypeId = data.details.plstTypeId,
 	          curLevel = this.levels[newLevelId],
 	          duration = newDetails.totalduration;
 
@@ -14666,7 +14735,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.levelLastLoaded = newLevelId;
 
 	      if (newDetails.live) {
-	        var curDetails = curLevel.details;
+	        var curDetails;
+	        switch (plstTypeId) {
+	          case 1:
+	            // VIDEO playlist
+	            curDetails = curLevel.details;
+	            break;
+	          case 2:
+	            curDetails = curLevel.detailsAudio;
+	            break;
+	          case 3:
+	            curDetails = curLevel.detailsSubt;
+	            break;
+	        }
+
 	        if (curDetails) {
 	          // we already have details for that level, merge them
 	          _helperLevelHelper2['default'].mergeDetails(curDetails, newDetails);
@@ -14682,8 +14764,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	      } else {
 	        newDetails.PTSKnown = false;
 	      }
-	      // override level info
-	      curLevel.details = newDetails;
+
+	      switch (plstTypeId) {
+	        case 1:
+	          // override VIDEO level info
+	          curLevel.details = newDetails;
+	          if (curLevel.audioUrl) {
+	            // event for loading alternative audio playlist
+	            this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: curLevel.audioUrl, level: newLevelId, id: id, plstTypeId: 2 });
+	            return;
+	          } else if (curLevel.subtUrl) {
+	            // event for loading alternative subtitle playlist
+	            this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: curLevel.subtUrl, level: newLevelId, id: id, plstTypeId: 3 });
+	            return;
+	          }
+	          break;
+
+	        case 2:
+	          // override AUDIO level info
+	          curLevel.detailsAudio = newDetails;
+	          if (curLevel.subtUrl) {
+	            this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: curLevel.subtUrl, level: newLevelId, id: id, plstTypeId: 3 });
+	            return;
+	          }
+	          break;
+
+	        case 3:
+	          // override Subtitle level info
+	          curLevel.detailsSubt = newDetails;
+	          break;
+
+	      }
+
 	      this.hls.trigger(_events2['default'].LEVEL_UPDATED, { details: newDetails, level: newLevelId });
 
 	      // compute start position
@@ -14923,27 +15035,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var currentTime = media.currentTime,
 	                bufferInfo = this.bufferInfo(currentTime, 0),
 	                isPlaying = !(media.paused || media.ended || media.seeking || readyState < 3),
-	                jumpThreshold = 0.2,
-	                playheadMoving = currentTime > media.playbackRate * this.lastCurrentTime;
-
-	            if (this.stalled && playheadMoving) {
-	              this.stalled = false;
-	            }
+	                jumpThreshold = 0.2;
 
 	            // check buffer upfront
 	            // if less than 200ms is buffered, and media is playing but playhead is not moving,
 	            // and we have a new buffer range available upfront, let's seek to that one
 	            if (bufferInfo.len <= jumpThreshold) {
-	              if (playheadMoving || !isPlaying) {
+	              if (currentTime > media.playbackRate * this.lastCurrentTime || !isPlaying) {
 	                // playhead moving or media not playing
 	                jumpThreshold = 0;
 	              } else {
-	                // playhead not moving AND media playing
 	                _utilsLogger.logger.log('playback seems stuck');
-	                if (!this.stalled) {
-	                  this.hls.trigger(_events2['default'].ERROR, { type: _errors.ErrorTypes.MEDIA_ERROR, details: _errors.ErrorDetails.BUFFER_STALLED_ERROR, fatal: false });
-	                  this.stalled = true;
-	                }
 	              }
 	              // if we are below threshold, try to jump if next buffer range is close
 	              if (bufferInfo.len <= jumpThreshold) {
@@ -15869,8 +15971,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function switchLevel() {
 	      this.pmtParsed = false;
 	      this._pmtId = -1;
-	      this.lastAacPTS = null;
-	      this.aacOverFlow = null;
 	      this._avcTrack = { type: 'video', id: -1, sequenceNumber: 0, samples: [], len: 0, nbNalu: 0 };
 	      this._aacTrack = { type: 'audio', id: -1, sequenceNumber: 0, samples: [], len: 0 };
 	      this._id3Track = { type: 'id3', id: -1, sequenceNumber: 0, samples: [], len: 0 };
@@ -16281,7 +16381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          case 3:
 	            if (value === 0) {
 	              state = 3;
-	            } else if (value === 1 && i < len) {
+	            } else if (value === 1) {
 	              unitType = array[i] & 0x1f;
 	              //logger.log('find NALU @ offset:' + i + ',type:' + unitType);
 	              if (lastUnitStart) {
@@ -16339,8 +16439,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          startOffset = 0,
 	          duration = this._duration,
 	          audioCodec = this.audioCodec,
-	          aacOverFlow = this.aacOverFlow,
-	          lastAacPTS = this.lastAacPTS,
 	          config,
 	          frameLength,
 	          frameDuration,
@@ -16350,11 +16448,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          stamp,
 	          len,
 	          aacSample;
-	      if (aacOverFlow) {
-	        var tmp = new Uint8Array(aacOverFlow.byteLength + data.byteLength);
-	        tmp.set(aacOverFlow, 0);
-	        tmp.set(data, aacOverFlow.byteLength);
-	        //logger.log(`AAC: append overflowing ${aacOverFlow.byteLength} bytes to beginning of new PES`);
+	      if (this.aacOverFlow) {
+	        var tmp = new Uint8Array(this.aacOverFlow.byteLength + data.byteLength);
+	        tmp.set(this.aacOverFlow, 0);
+	        tmp.set(data, this.aacOverFlow.byteLength);
 	        data = tmp;
 	      }
 	      // look for ADTS header (0xFFFx)
@@ -16390,28 +16487,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      frameIndex = 0;
 	      frameDuration = 1024 * 90000 / track.audiosamplerate;
-
-	      // if last AAC frame is overflowing, we should ensure timestamps are contiguous:
-	      // first sample PTS should be equal to last sample PTS + frameDuration
-	      if (aacOverFlow && lastAacPTS) {
-	        var newPTS = lastAacPTS + frameDuration;
-	        if (Math.abs(newPTS - pts) > 1) {
-	          _utilsLogger.logger.log('AAC: align PTS for overlapping frames by ' + Math.round((newPTS - pts) / 90));
-	          pts = newPTS;
-	        }
-	      }
-
 	      while (offset + 5 < len) {
 	        // The protection skip bit tells us if we have 2 bytes of CRC data at the end of the ADTS header
 	        headerLength = !!(data[offset + 1] & 0x01) ? 7 : 9;
 	        // retrieve frame size
 	        frameLength = (data[offset + 3] & 0x03) << 11 | data[offset + 4] << 3 | (data[offset + 5] & 0xE0) >>> 5;
 	        frameLength -= headerLength;
+	        stamp = Math.round(pts + frameIndex * frameDuration);
 	        //stamp = pes.pts;
 
+	        //console.log('AAC frame, offset/length/pts:' + (offset+headerLength) + '/' + frameLength + '/' + stamp.toFixed(0));
 	        if (frameLength > 0 && offset + headerLength + frameLength <= len) {
-	          stamp = Math.round(pts + frameIndex * frameDuration);
-	          //logger.log(`AAC frame, offset/length/total/pts:${offset+headerLength}/${frameLength}/${data.byteLength}/${(stamp/90).toFixed(0)}`);
 	          aacSample = { unit: data.subarray(offset + headerLength, offset + headerLength + frameLength), pts: stamp, dts: stamp };
 	          track.samples.push(aacSample);
 	          track.len += frameLength;
@@ -16428,13 +16514,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 	      if (offset < len) {
-	        aacOverFlow = data.subarray(offset, len);
-	        //logger.log(`AAC: overflow detected:${len-offset}`);
+	        this.aacOverFlow = data.subarray(offset, len);
 	      } else {
-	          aacOverFlow = null;
-	        }
-	      this.aacOverFlow = aacOverFlow;
-	      this.lastAacPTS = stamp;
+	        this.aacOverFlow = null;
+	      }
 	    }
 	  }, {
 	    key: '_parseID3PES',
@@ -17517,13 +17600,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (delta) {
 	              if (delta > 0) {
 	                _utilsLogger.logger.log(delta + ' ms hole between AAC samples detected,filling it');
-	                // if we have frame overlap, overlapping for more than half a frame duraion
-	              } else if (delta < -12) {
-	                  // drop overlapping audio frames... browser will deal with it
-	                  _utilsLogger.logger.log(-delta + ' ms overlapping between AAC samples detected, drop frame');
-	                  track.len -= unit.byteLength;
-	                  continue;
-	                }
+	              } else if (delta < 0) {
+	                // drop overlapping audio frames... browser will deal with it
+	                _utilsLogger.logger.log(-delta + ' ms overlapping between AAC samples detected, drop frame');
+	                track.len -= unit.byteLength;
+	                continue;
+	              }
 	              // set DTS to next DTS
 	              ptsnorm = dtsnorm = nextAacPts;
 	            }
@@ -19059,6 +19141,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            break;
 	          }
 	        }
+
+	        this._audios = data.audios;
+	        this._subtitles = data.subtitles;
+
 	        hls.trigger(_events2['default'].MANIFEST_PARSED, { levels: this._levels, firstLevel: this._firstLevel, stats: data.stats });
 	      } else {
 	        hls.trigger(_events2['default'].ERROR, { type: _errors.ErrorTypes.NETWORK_ERROR, details: _errors.ErrorDetails.MANIFEST_PARSING_ERROR, fatal: true, url: hls.url, reason: 'no compatible level found in manifest' });
@@ -19066,9 +19152,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 	  }, {
+	    key: 'setlectlang',
+	    value: function setlectlang(list, langName, groupId) {
+	      var autoselect = -1;
+	      // find language
+	      for (var i = 0; i < list.length; i++) {
+	        if (groupId !== undefined && groupId !== list[i].groupId) {
+	          continue;
+	        }
+	        if (list[i].autoselect) {
+	          // store autoselect language
+	          autoselect = i;
+	        }
+	        if (list[i].name === langName) {
+	          return list[i];
+	        }
+	      }
+	      if (autoselect >= 0 && langName === undefined) {
+	        return list[autoselect];
+	      }
+	      return undefined;
+	    }
+	  }, {
 	    key: 'setLevelInternal',
 	    value: function setLevelInternal(newLevel) {
-	      // check if level idx is valid
+	      // check if level idx is valid   
 	      if (newLevel >= 0 && newLevel < this._levels.length) {
 	        // stopping live reloading timer if any
 	        if (this.timer) {
@@ -19076,15 +19184,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.timer = null;
 	        }
 	        this._level = newLevel;
+
 	        _utilsLogger.logger.log('switching to level ' + newLevel);
 	        this.hls.trigger(_events2['default'].LEVEL_SWITCH, { level: newLevel });
 	        var level = this._levels[newLevel];
+
+	        var plstTypeId = 1; // VIDEO
+	        this._levels[newLevel].plstTypeId = plstTypeId; // start loading with video playlist
+
 	        // check if we need to load playlist for this level
 	        if (level.details === undefined || level.details.live === true) {
 	          // level not retrieved yet, or live playlist we need to (re)load it
 	          _utilsLogger.logger.log('(re)loading playlist for level ' + newLevel);
+
+	          // prepare audio and subtitels
+	          if (this._audios.length > 0) {
+	            this._audio = this.setlectlang(this._audios, this._audioLangName, level.audioGrupId);
+	            this._levels[newLevel].audioUrl = this._audio === undefined ? undefined : this._audio.url;
+	          }
+	          if (this._subtitles.length > 0) {
+	            this._subtitle = this.setlectlang(this._audios, this._subtitleLangName, level.subtGrupId);
+	            this._levels[newLevel].subtUrl = this.__subtitle === undefined ? undefined : this._subtitle.url;
+	          }
+
 	          var urlId = level.urlId;
-	          this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: level.url[urlId], level: newLevel, id: urlId });
+	          this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: level.url[urlId], level: newLevel, id: urlId, plstTypeId: plstTypeId });
 	        }
 	      } else {
 	        // invalid level id given, trigger error
@@ -19175,7 +19299,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (levelId !== undefined) {
 	        var level = this._levels[levelId],
 	            urlId = level.urlId;
-	        this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: level.url[urlId], level: levelId, id: urlId });
+	        var plstTypeId = this._levels[levelId].plstTypeId;
+	        this.hls.trigger(_events2['default'].LEVEL_LOADING, { url: level.url[urlId], level: levelId, id: urlId, plstTypeId: plstTypeId });
 	      }
 	    }
 	  }, {
@@ -19201,6 +19326,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this._level !== newLevel || this._levels[newLevel].details === undefined) {
 	        this.setLevelInternal(newLevel);
 	      }
+	    }
+	  }, {
+	    key: 'audios',
+	    get: function get() {
+	      return this._audios;
+	    }
+	  }, {
+	    key: 'audioLangName',
+	    get: function get() {
+	      return this._audioLangName;
+	    },
+	    set: function set(name) {
+	      this._audioLangName = name;
+	    }
+	  }, {
+	    key: 'subtitles',
+	    get: function get() {
+	      return this._subtitles;
+	    }
+	  }, {
+	    key: 'subtitleLangName',
+	    get: function get() {
+	      return this._subtitleLangName;
+	    },
+	    set: function set(name) {
+	      this._subtitleLangName = name;
 	    }
 	  }, {
 	    key: 'manualLevel',
@@ -19314,14 +19465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'loadInternal',
 	    value: function loadInternal() {
-	      var xhr;
-
-	      if (typeof XDomainRequest !== 'undefined') {
-	        xhr = this.loader = new XDomainRequest();
-	      } else {
-	        xhr = this.loader = new XMLHttpRequest();
-	      }
-
+	      var xhr = this.loader = new XMLHttpRequest();
 	      xhr.onloadend = this.loadend.bind(this);
 	      xhr.onprogress = this.loadprogress.bind(this);
 
